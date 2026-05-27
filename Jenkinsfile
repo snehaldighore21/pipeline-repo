@@ -1,8 +1,8 @@
 pipeline {
 
     agent {
-    label 'terraform'
-  }
+        label 'terraform'
+    }
 
     parameters {
         choice(
@@ -14,6 +14,7 @@ pipeline {
 
     environment {
         TF_DIR = 'environments/dev'
+        AWS_DEFAULT_REGION = 'ap-southeast-2'
     }
 
     stages {
@@ -27,7 +28,14 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 dir("${env.TF_DIR}") {
-                    sh 'terraform init -input=false -backend-config=backend.hcl'
+
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'snehal-aws'
+                    ]]) {
+
+                        sh 'terraform init -input=false -backend-config=backend.hcl'
+                    }
                 }
             }
         }
@@ -35,7 +43,14 @@ pipeline {
         stage('Terraform Validate') {
             steps {
                 dir("${env.TF_DIR}") {
-                    sh 'terraform validate'
+
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'snehal-aws'
+                    ]]) {
+
+                        sh 'terraform validate'
+                    }
                 }
             }
         }
@@ -43,7 +58,14 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 dir("${env.TF_DIR}") {
-                    sh 'terraform plan -input=false -out=tfplan'
+
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'snehal-aws'
+                    ]]) {
+
+                        sh 'terraform plan -input=false -out=tfplan'
+                    }
                 }
             }
         }
@@ -52,17 +74,25 @@ pipeline {
             when {
                 expression { params.ACTION == 'apply' }
             }
+
             steps {
                 dir("${env.TF_DIR}") {
+
                     input(
                         message: 'Apply VPC and EKS to dev?',
                         ok: 'Apply'
                     )
-                    sh 'terraform apply -input=false tfplan'
+
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'snehal-aws'
+                    ]]) {
+
+                        sh 'terraform apply -input=false tfplan'
+                    }
                 }
             }
         }
-
     }
 
     post {
@@ -72,5 +102,4 @@ pipeline {
             }
         }
     }
-
 }

@@ -1,5 +1,3 @@
-:::writing{variant="document" id="48271"}
-```groovy
 pipeline {
 
     agent {

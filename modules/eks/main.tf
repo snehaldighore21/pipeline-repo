@@ -1,3 +1,4 @@
+```hcl id="m4z7ra"
 locals {
   name_prefix = "${var.environment}-${var.cluster_name}"
 }
@@ -102,7 +103,9 @@ resource "aws_eks_cluster" "main" {
     endpoint_private_access = false
   }
 
-  depends_on = [aws_iam_role_policy_attachment.cluster_policy]
+  depends_on = [
+    aws_iam_role_policy_attachment.cluster_policy
+  ]
 }
 
 resource "aws_eks_node_group" "main" {
@@ -110,6 +113,9 @@ resource "aws_eks_node_group" "main" {
   node_group_name = "${local.name_prefix}-nodes"
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids      = var.subnet_ids
+
+  ami_type      = "AL2_x86_64"
+  capacity_type = "ON_DEMAND"
 
   instance_types = [var.node_instance_type]
   disk_size      = 20
@@ -126,3 +132,4 @@ resource "aws_eks_node_group" "main" {
     aws_iam_role_policy_attachment.node_ecr,
   ]
 }
+```

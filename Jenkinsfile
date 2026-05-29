@@ -1,3 +1,4 @@
+```groovy id="6yhz8n"
 pipeline {
 
     agent {
@@ -71,11 +72,13 @@ pipeline {
         }
 
         stage('Terraform Apply') {
+
             when {
                 expression { params.ACTION == 'apply' }
             }
 
             steps {
+
                 dir("${env.TF_DIR}") {
 
                     input(
@@ -96,6 +99,39 @@ pipeline {
     }
 
     post {
+
+        success {
+            emailext(
+                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+Build Success!
+
+Job Name: ${env.JOB_NAME}
+Build Number: ${env.BUILD_NUMBER}
+
+Build URL:
+${env.BUILD_URL}
+""",
+                to: "snehaldighore21@gmail.com"
+            )
+        }
+
+        failure {
+            emailext(
+                subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+Build Failed!
+
+Job Name: ${env.JOB_NAME}
+Build Number: ${env.BUILD_NUMBER}
+
+Build URL:
+${env.BUILD_URL}
+""",
+                to: "snehaldighore21@gmail.com"
+            )
+        }
+
         always {
             dir("${env.TF_DIR}") {
                 sh 'rm -f tfplan || true'
@@ -103,3 +139,4 @@ pipeline {
         }
     }
 }
+

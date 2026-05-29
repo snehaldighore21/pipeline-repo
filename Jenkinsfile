@@ -1,4 +1,5 @@
-```groovy id="6yhz8n"
+:::writing{variant="document" id="48271"}
+```groovy
 pipeline {
 
     agent {
@@ -74,7 +75,9 @@ pipeline {
         stage('Terraform Apply') {
 
             when {
-                expression { params.ACTION == 'apply' }
+                expression {
+                    params.ACTION == 'apply'
+                }
             }
 
             steps {
@@ -139,4 +142,3 @@ ${env.BUILD_URL}
         }
     }
 }
-

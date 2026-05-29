@@ -1,4 +1,3 @@
-```hcl id="m4z7ra"
 locals {
   name_prefix = "${var.environment}-${var.cluster_name}"
 }
@@ -132,4 +131,3 @@ resource "aws_eks_node_group" "main" {
     aws_iam_role_policy_attachment.node_ecr,
   ]
 }
-```

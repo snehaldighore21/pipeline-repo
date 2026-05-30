@@ -160,7 +160,6 @@ to: "[snehaldighore21@gmail.com](mailto:snehaldighore21@gmail.com)"
         dir("${env.TF_DIR}") {
             sh 'rm -f tfplan || true'
         }
-    }
+     }
+  }
 }
-}
-

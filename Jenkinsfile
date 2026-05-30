@@ -1,6 +1,5 @@
 pipeline {
-
-```
+    
 agent {
     label 'terraform'
 }
@@ -128,7 +127,6 @@ post {
         emailext(
             subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
             body: """
-```
 
 Build Success!
 
@@ -142,12 +140,10 @@ to: "[snehaldighore21@gmail.com](mailto:snehaldighore21@gmail.com)"
 )
 }
 
-```
     failure {
         emailext(
             subject: "FAILED: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
             body: """
-```
 
 Build Failed!
 
@@ -156,19 +152,15 @@ Build Number: ${env.BUILD_NUMBER}
 
 Build URL:
 ${env.BUILD_URL}
-""",
+
 to: "[snehaldighore21@gmail.com](mailto:snehaldighore21@gmail.com)"
 )
 }
-
-```
     always {
         dir("${env.TF_DIR}") {
             sh 'rm -f tfplan || true'
         }
     }
 }
-```
-
 }
 
